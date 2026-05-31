@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>全球技术识别评估扫描系统 — AI芯片领域示范</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===========================================
+   SWISS MODERN — Data-driven government deck
+   =========================================== */
+
+html, body { height: 100%; overflow-x: hidden; margin: 0; padding: 0; }
+html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+
+:root {
+  --bg: #fafafa; --fg: #111; --accent: #d32f2f; --muted: #555;
+  --rule: #e0e0e0; --card-bg: #fff; --tag-bg: #f5f5f5;
+  --green: #2e7d32; --amber: #e65100; --blue: #1565c0;
+  --title-size: clamp(1.5rem, 5vw, 4rem);
+  --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+  --h3-size: clamp(1rem, 2.5vw, 1.75rem);
+  --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+  --small-size: clamp(0.65rem, 1vw, 0.875rem);
+  --slide-padding: clamp(1.5rem, 5vw, 5rem);
+  --content-gap: clamp(0.75rem, 2vw, 2rem);
+}
+
+.slide {
+  width: 100vw; height: 100vh; height: 100dvh; overflow: hidden;
+  scroll-snap-align: start; display: flex; flex-direction: column;
+  position: relative; background: var(--bg); color: var(--fg);
+  font-family: 'Nunito', system-ui, sans-serif;
+}
+.slide-content {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  max-height: 100%; overflow: hidden; padding: var(--slide-padding);
+}
+
+h1 { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: var(--title-size); line-height: 1.1; margin: 0; }
+h2 { font-family: 'Archivo', sans-serif; font-weight: 700; font-size: var(--h2-size); margin: 0 0 var(--content-gap) 0; }
+h3 { font-family: 'Archivo', sans-serif; font-weight: 600; font-size: var(--h3-size); margin: 0 0 0.5rem 0; }
+p, li { font-size: var(--body-size); line-height: 1.5; color: var(--muted); margin: 0; }
+
+.accent-rule { width: clamp(40px, 8vw, 80px); height: 3px; background: var(--accent); margin-bottom: var(--content-gap); }
+.tag { display: inline-block; padding: 2px 10px; background: var(--tag-bg); border-radius: 3px; font-size: var(--small-size); font-weight: 600; letter-spacing: 0.5px; }
+.tag-red { background: #ffebee; color: #c62828; }
+.tag-green { background: #e8f5e9; color: #2e7d32; }
+.tag-amber { background: #fff3e0; color: #e65100; }
+.tag-blue { background: #e3f2fd; color: #1565c0; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--content-gap); }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--content-gap); }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--content-gap); }
+.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--content-gap); }
+
+.card {
+  background: var(--card-bg); border: 1px solid var(--rule); border-radius: 6px;
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+}
+.card .number { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: clamp(1.5rem, 4vw, 3rem); line-height: 1; color: var(--fg); }
+.card .label { font-size: var(--small-size); color: var(--muted); margin-top: 4px; }
+.card .source { font-size: var(--small-size); color: #999; margin-top: 8px; }
+
+.metric-row { display: flex; gap: clamp(0.5rem, 1.5vw, 1rem); flex-wrap: wrap; }
+.metric { flex: 1; min-width: 100px; text-align: center; padding: clamp(0.5rem, 1.5vw, 1rem); }
+.metric .val { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: clamp(1.2rem, 3vw, 2.5rem); color: var(--fg); }
+.metric .lbl { font-size: var(--small-size); color: var(--muted); margin-top: 2px; }
+
+.progress-bar { height: 4px; background: var(--rule); border-radius: 2px; margin-top: 4px; }
+.progress-bar .fill { height: 100%; border-radius: 2px; }
+.fill-green { background: var(--green); }
+.fill-amber { background: var(--amber); }
+.fill-red { background: var(--accent); }
+
+.slide-num { position: absolute; bottom: clamp(0.5rem, 2vw, 1.5rem); right: clamp(1rem, 3vw, 2rem); font-size: var(--small-size); color: #bbb; }
+
+/* Nav dots */
+.nav-dots { position: fixed; right: clamp(0.5rem, 2vw, 1.5rem); top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+.nav-dots .dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; cursor: pointer; transition: background 0.2s; }
+.nav-dots .dot.active { background: var(--accent); }
+
+@media (max-height: 700px) {
+  :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); }
+  .nav-dots { display: none; }
+}
+@media (max-height: 500px) {
+  :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); --title-size: clamp(1rem, 3.5vw, 1.5rem); }
+}
+@media (max-width: 600px) { .grid-2, .grid-3, .grid-4, .grid-5 { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<!-- Nav dots -->
+<nav class="nav-dots" id="navDots"></nav>
+
+<!-- ====== S1: Title ====== -->
+<section class="slide" id="s1">
+  <div class="slide-content" style="align-items:flex-start;">
+    <span class="tag tag-red" style="margin-bottom:var(--content-gap);">TECHNOLOGY LANDSCAPE INTELLIGENCE</span>
+    <h1>全球技术识别评估<br>扫描系统</h1>
+    <div class="accent-rule"></div>
+    <p style="font-size:var(--h3-size);color:var(--fg);max-width:600px;">AI芯片领域示范应用<br>面向政府科技部门与产业规划</p>
+    <p style="margin-top:var(--content-gap);">2026年5月 · 内部汇报</p>
+  </div>
+  <span class="slide-num">01 / 10</span>
+</section>
+
+<!-- ====== S2: System Architecture ====== -->
+<section class="slide" id="s2">
+  <div class="slide-content">
+    <span class="tag tag-red" style="margin-bottom:0.5rem;">系统概述</span>
+    <h2>五层架构 · 六大核心能力</h2>
+    <div class="accent-rule"></div>
+    <div style="display:flex;flex-direction:column;gap:0.5rem;max-width:700px;">
+      <div class="card" style="border-left:3px solid var(--accent);"><strong>交互应用层</strong> <span style="color:var(--muted);">— 大屏 · 报告 · 问答 · 图谱 · 看板</span></div>
+      <div class="card" style="border-left:3px solid #e65100;"><strong>分析决策层</strong> <span style="color:var(--muted);">— 评价模型 · 对比分析 · 趋势预测</span></div>
+      <div class="card" style="border-left:3px solid #f9a825;"><strong>知识图谱层</strong> <span style="color:var(--muted);">— 技术-主体-专利-论文-产品关系网络</span></div>
+      <div class="card" style="border-left:3px solid var(--green);"><strong>数据治理层</strong> <span style="color:var(--muted);">— 清洗 · 消歧 · 标准化 · 标签化 · 融合</span></div>
+      <div class="card" style="border-left:3px solid var(--blue);"><strong>数据采集层</strong> <span style="color:var(--muted);">— 专利 · 论文 · 企业 · 投融资 · 新闻 · 产品 · 政策 · 标准 · 供应链</span></div>
+    </div>
+    <div style="display:flex;gap:0.5rem;margin-top:var(--content-gap);flex-wrap:wrap;">
+      <span class="tag tag-blue">全球多源采集</span><span class="tag tag-green">技术主题识别</span><span class="tag tag-amber">主体画像评价</span><span class="tag tag-red">知识图谱推理</span><span class="tag tag-blue">中外对比分析</span><span class="tag tag-green">AI报告生成</span>
+    </div>
+  </div>
+  <span class="slide-num">02 / 10</span>
+</section>
+
+<!-- ====== S3: Data Assets ====== -->
+<section class="slide" id="s3">
+  <div class="slide-content">
+    <span class="tag tag-blue" style="margin-bottom:0.5rem;">数据资产</span>
+    <h2>已采集的AI芯片领域数据</h2>
+    <div class="accent-rule"></div>
+    <div class="grid-5">
+      <div class="card" style="text-align:center;">
+        <div class="number">34,601</div><div class="label">专利</div>
+        <div class="source">EPO API + HuggingFace + LLM</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="number">14,933</div><div class="label">论文</div>
+        <div class="source">OpenAlex API (免费)</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="number">26</div><div class="label">产品</div>
+        <div class="source">Web搜索 + 参数提取</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="number">66</div><div class="label">企业</div>
+        <div class="source">专利Assignees推导</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="number">200</div><div class="label">专家</div>
+        <div class="source">论文作者提取 (Top200)</div>
+      </div>
+    </div>
+    <div style="margin-top:var(--content-gap);">
+      <h3>数据规模对比（文档规划 vs 当前完成）</h3>
+      <div class="metric-row">
+        <div class="metric"><div class="val" style="color:var(--green);">23%</div><div class="lbl">专利覆盖率</div><div class="progress-bar"><div class="fill fill-green" style="width:23%;"></div></div><div style="font-size:var(--small-size);color:var(--muted);">规划15万件 → 已采3.4万</div></div>
+        <div class="metric"><div class="val" style="color:var(--green);">19%</div><div class="lbl">论文覆盖率</div><div class="progress-bar"><div class="fill fill-green" style="width:19%;"></div></div><div style="font-size:var(--small-size);color:var(--muted);">规划8万篇 → 已采1.5万</div></div>
+        <div class="metric"><div class="val" style="color:var(--amber);">1%</div><div class="lbl">产品覆盖率</div><div class="progress-bar"><div class="fill fill-amber" style="width:1%;"></div></div><div style="font-size:var(--small-size);color:var(--muted);">规划3千款 → 已采26款</div></div>
+        <div class="metric"><div class="val" style="color:var(--amber);">3%</div><div class="lbl">企业覆盖率</div><div class="progress-bar"><div class="fill fill-amber" style="width:3%;"></div></div><div style="font-size:var(--small-size);color:var(--muted);">规划2千家 → 已推66家</div></div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num">03 / 10</span>
+</section>
+
+<!-- ====== S4: Tech Tree ====== -->
+<section class="slide" id="s4">
+  <div class="slide-content">
+    <span class="tag tag-green" style="margin-bottom:0.5rem;">技术分解树</span>
+    <h2>7大L1分支 · 39个节点</h2>
+    <div class="accent-rule"></div>
+    <div class="grid-2">
+      <div>
+        <div class="card" style="margin-bottom:0.5rem;">
+          <h3>GPU架构 <span class="tag tag-blue">899专利</span></h3>
+          <p>张量核心 · 多芯片互联 · HBM内存 · CUDA生态</p>
+          <div class="progress-bar" style="margin-top:8px;"><div class="fill fill-green" style="width:34%;"></div></div>
+        </div>
+        <div class="card" style="margin-bottom:0.5rem;">
+          <h3>AI加速器 (NPU/TPU) <span class="tag tag-blue">613专利</span></h3>
+          <p>脉动阵列 · 数据流架构 · 近存计算 · 软件栈</p>
+          <div class="progress-bar" style="margin-top:8px;"><div class="fill fill-green" style="width:23%;"></div></div>
+        </div>
+        <div class="card" style="margin-bottom:0.5rem;">
+          <h3>存算一体 (CIM) <span class="tag tag-amber">55专利</span></h3>
+          <p>SRAM存算 · RRAM忆阻器 · Flash存算</p>
+          <div class="progress-bar" style="margin-top:8px;"><div class="fill fill-amber" style="width:2%;"></div></div>
+        </div>
+        <div class="card">
+          <h3>类脑/神经形态 <span class="tag tag-amber">320专利</span></h3>
+          <p>脉冲神经网络 · 事件驱动 · 在片学习</p>
+          <div class="progress-bar" style="margin-top:8px;"><div class="fill fill-amber" style="width:12%;"></div></div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom:0.5rem;">
+          <h3>光子计算 <span class="tag tag-amber">14专利</span></h3>
+          <p>硅光芯片 · 光子矩阵乘法 · 相变材料</p>
+          <div class="progress-bar" style="margin-top:8px;"><div class="fill fill-amber" style="width:1%;"></div></div>
+        </div>
+        <div class="card" style="margin-bottom:0.5rem;">
+          <h3>可重构计算 <span class="tag tag-amber">28专利</span></h3>
+          <p>CGRA · FPGA动态重构 · 弹性流水线</p>
+          <div class="progress-bar" style="margin-top:8px;"><div class="fill fill-amber" style="width:1%;"></div></div>
+        </div>
+        <div class="card" style="margin-bottom:0.5rem;">
+          <h3>先进封装 <span class="tag tag-amber">60专利</span></h3>
+          <p>CoWoS硅中介层 · 3D混合键合 · Chiplet互连</p>
+          <div class="progress-bar" style="margin-top:8px;"><div class="fill fill-amber" style="width:2%;"></div></div>
+        </div>
+        <div class="card" style="background:var(--tag-bg);">
+          <h3>聚合规则</h3>
+          <p style="font-size:var(--small-size);">每个技术节点独立搜索 → 分类到最细粒度 → 自底向上聚合<br><strong>父节点专利数 = 自身 + Σ子节点</strong>（专利best-match）<br><strong>论文允许跨分支归属</strong>（multi-match）</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num">04 / 10</span>
+</section>
+
+<!-- ====== S5: Data Lineage ====== -->
+<section class="slide" id="s5">
+  <div class="slide-content">
+    <span class="tag tag-blue" style="margin-bottom:0.5rem;">数据溯源</span>
+    <h2>从原始数据到前端可视化的完整链路</h2>
+    <div class="accent-rule"></div>
+    <div style="font-size:var(--small-size);overflow:hidden;">
+      <div class="card" style="margin-bottom:0.5rem;padding:0.75rem clamp(0.5rem,1.5vw,1rem);">
+        <strong style="font-family:'Archivo',sans-serif;">1. 数据采集</strong>
+        <span style="color:var(--muted);">EPO API · OpenAlex API · 36氪 RSS · Web搜索 → Collector脚本 (Python)</span>
+      </div>
+      <div class="card" style="margin-bottom:0.5rem;padding:0.75rem clamp(0.5rem,1.5vw,1rem);">
+        <strong style="font-family:'Archivo',sans-serif;">2. 数据处理</strong>
+        <span style="color:var(--muted);">IPC分类匹配 · 关键词匹配 · 实体提取 · Bottom-up聚合 → seed_ai_chip.py</span>
+      </div>
+      <div class="card" style="margin-bottom:0.5rem;padding:0.75rem clamp(0.5rem,1.5vw,1rem);">
+        <strong style="font-family:'Archivo',sans-serif;">3. 数据存储</strong>
+        <span style="color:var(--muted);">SQLite (7张表) : patents(34k) · papers(15k) · companies(66) · experts(200) · products(26) · evidence · tech_tree_nodes(39)</span>
+      </div>
+      <div class="card" style="margin-bottom:0.5rem;padding:0.75rem clamp(0.5rem,1.5vw,1rem);">
+        <strong style="font-family:'Archivo',sans-serif;">4. API服务</strong>
+        <span style="color:var(--muted);">FastAPI (Python) → 16个REST端点 → /api/overview, /api/companies, /api/experts, etc.</span>
+      </div>
+      <div class="card" style="padding:0.75rem clamp(0.5rem,1.5vw,1rem);">
+        <strong style="font-family:'Archivo',sans-serif;">5. 前端可视化</strong>
+        <span style="color:var(--muted);">单页HTML (Jinja2模板) + ECharts 5.6 → 9个交互Tab → 30+图表</span>
+      </div>
+    </div>
+    <p style="margin-top:0.75rem;font-size:var(--small-size);"><span class="tag tag-green">自动更新</span> Collector → DB → API → 前端（无种子数据中转，实时生效）</p>
+  </div>
+  <span class="slide-num">05 / 10</span>
+</section>
+
+<!-- ====== S6: Evaluation Models ====== -->
+<section class="slide" id="s6">
+  <div class="slide-content">
+    <span class="tag tag-red" style="margin-bottom:0.5rem;">评价指标体系</span>
+    <h2>4套模型 · 26个维度</h2>
+    <div class="accent-rule"></div>
+    <div class="grid-2">
+      <div class="card">
+        <h3>技术综合评价 <span class="tag tag-green">2/7真实</span></h3>
+        <p style="font-size:var(--small-size);">
+          <span style="color:var(--green);">✓ 科研热度</span> (论文) ·
+          <span style="color:var(--green);">✓ 专利强度</span> (专利)<br>
+          <span style="color:var(--amber);">△ 产业化程度</span> (缺营收/出货)<br>
+          <span style="color:var(--accent);">✗ 市场潜力</span> (缺市场报告)<br>
+          <span style="color:var(--accent);">✗ 政策支持/资本关注/战略安全</span> (缺数据源)
+        </p>
+      </div>
+      <div class="card">
+        <h3>主体综合评价 <span class="tag tag-amber">1/6真实</span></h3>
+        <p style="font-size:var(--small-size);">
+          <span style="color:var(--amber);">△ 技术能力</span> (专利模型推算)<br>
+          <span style="color:var(--accent);">✗ 产业化能力/影响力/成长性</span><br>
+          <span style="color:var(--amber);">△ 国际化</span> (专利国别可推)<br>
+          <span style="color:var(--accent);">✗ 风险修正</span>
+        </p>
+      </div>
+      <div class="card">
+        <h3>国家技术实力 <span class="tag tag-green">3/7真实</span></h3>
+        <p style="font-size:var(--small-size);">
+          <span style="color:var(--green);">✓ 科研基础</span> (论文) ·
+          <span style="color:var(--green);">✓ 专利布局</span> (专利) ·
+          <span style="color:var(--green);">✓ 头部企业</span><br>
+          <span style="color:var(--accent);">✗ 产业链完整度</span> (全默认值"中游")<br>
+          <span style="color:var(--accent);">✗ 政策资本/标准话语权/供应链安全</span>
+        </p>
+      </div>
+      <div class="card">
+        <h3>隐形冠军识别 <span class="tag tag-red">0/6真实</span></h3>
+        <p style="font-size:var(--small-size);">
+          <span style="color:var(--amber);">△ 细分赛道专注度/技术壁垒</span> (模型推算)<br>
+          <span style="color:var(--accent);">✗ 客户供应链位置</span> (缺采购/年报)<br>
+          <span style="color:var(--accent);">✗ 成长性/国际化/曝光度修正</span><br><br>
+          <strong style="color:var(--accent);">⚠ 当前评分不可信，依赖synthetic默认值</strong>
+        </p>
+      </div>
+    </div>
+    <p style="margin-top:0.5rem;font-size:var(--small-size);color:var(--muted);">数据缺口主要集中在：投融资(Crunchbase) · 市场报告 · 供应链(海关/年报) · 政策 · 标准</p>
+  </div>
+  <span class="slide-num">06 / 10</span>
+</section>
+
+<!-- ====== S7: Frontend Tabs ====== -->
+<section class="slide" id="s7">
+  <div class="slide-content">
+    <span class="tag tag-blue" style="margin-bottom:0.5rem;">前端可视化</span>
+    <h2>9个交互Tab · 30+图表</h2>
+    <div class="accent-rule"></div>
+    <div class="grid-3">
+      <div class="card"><h3>📊 总览</h3><p style="font-size:var(--small-size);">Stat Cards + 年度趋势 + 国家雷达 + Top企业 + 象限图</p><p style="font-size:var(--small-size);margin-top:4px;">
+        <span class="tag tag-green">7/10 图表有数据</span>
+        <span class="tag tag-red" style="margin-left:4px;">融资/市场份额/动态 缺失</span></p></div>
+      <div class="card"><h3>🗺️ 技术图谱</h3><p style="font-size:var(--small-size);">技术气泡图 (maturity × competition)</p><p style="font-size:var(--small-size);margin-top:4px;"><span class="tag tag-green">✅ 完整</span></p></div>
+      <div class="card"><h3>🏢 企业</h3><p style="font-size:var(--small-size);">评分排名 + 雷达图 + 象限 + 技术矩阵</p><p style="font-size:var(--small-size);margin-top:4px;"><span class="tag tag-amber">⚠ 评分模型推算</span></p></div>
+      <div class="card"><h3>🌍 国家对比</h3><p style="font-size:var(--small-size);">多国雷达 + 中美柱状图 + 排名表</p><p style="font-size:var(--small-size);margin-top:4px;"><span class="tag tag-green">✅ 完整</span></p></div>
+      <div class="card"><h3>📄 专利分析</h3><p style="font-size:var(--small-size);">趋势线 + 权人Bar + 国家Pie</p><p style="font-size:var(--small-size);margin-top:4px;"><span class="tag tag-green">✅ 完整</span></p></div>
+      <div class="card"><h3>🎓 学术分析</h3><p style="font-size:var(--small-size);">趋势 + 专家类型 + 机构 + 研究方向</p><p style="font-size:var(--small-size);margin-top:4px;"><span class="tag tag-green">✅ 完整</span></p></div>
+      <div class="card"><h3>💾 产品技术</h3><p style="font-size:var(--small-size);">技术矩阵 + 时序 + 算力对比 + 象限</p><p style="font-size:var(--small-size);margin-top:4px;"><span class="tag tag-green">✅ 26款产品</span></p></div>
+      <div class="card"><h3>📈 趋势</h3><p style="font-size:var(--small-size);">成熟度分布 + 突破方向时间线</p><p style="font-size:var(--small-size);margin-top:4px;"><span class="tag tag-green">✅ 完整</span></p></div>
+      <div class="card" style="background:var(--tag-bg);"><h3>🔗 产业链 <span class="tag tag-red">BLOCKED</span></h3><p style="font-size:var(--small-size);">供应链数据缺失，显示placeholder</p><p style="font-size:var(--small-size);margin-top:4px;">待采集：海关 · 年报 · 招投标</p></div>
+    </div>
+  </div>
+  <span class="slide-num">07 / 10</span>
+</section>
+
+<!-- ====== S8: Indicators Deep Dive ====== -->
+<section class="slide" id="s8">
+  <div class="slide-content">
+    <span class="tag tag-red" style="margin-bottom:0.5rem;">指标溯源示例</span>
+    <h2>每个数字都可追溯</h2>
+    <div class="accent-rule"></div>
+    <div class="grid-2">
+      <div class="card">
+        <h3>专利总量: 2,618 (分类后)</h3>
+        <p style="font-size:var(--small-size);">
+          <strong>原始数据</strong>: EPO API 搜索 "AI chip" + IPC → 34,601条<br>
+          <strong>分类匹配</strong>: IPC 前缀匹配到39个技术节点 → 2,618条<br>
+          <strong>聚合</strong>: 自底向上, 父节点=子节点之和 (best-match)<br>
+          <strong>前端</strong>: Stat Card 显示 root.patent_count = 2,618<br>
+          <strong>可信度</strong>: <span class="tag tag-green">高</span> 专利数据 + IPC匹配有据可查
+        </p>
+      </div>
+      <div class="card">
+        <h3>论文总量: 21,602 (聚合后)</h3>
+        <p style="font-size:var(--small-size);">
+          <strong>原始数据</strong>: OpenAlex API, 31节点×3关键词搜索 → 16,589条<br>
+          <strong>去重</strong>: 按openalex_id/doi, per-node dedup → 14,933条<br>
+          <strong>聚合</strong>: 父节点 = 自身 + Σ子节点 (multi-match, 无跨分支去重)<br>
+          <strong>前端</strong>: Stat Card 显示 21,602 (含跨分支重复)<br>
+          <strong>可信度</strong>: <span class="tag tag-green">高</span> 但跨分支有重复计数
+        </p>
+      </div>
+      <div class="card">
+        <h3>企业评分: NVIDIA 98分</h3>
+        <p style="font-size:var(--small-size);">
+          <strong>计算</strong>: tech_strength×0.25 + market×0.25 + influence×0.25 + capital×0.25<br>
+          <strong>tech_strength</strong>: <span class="tag tag-green">✓</span> 专利量log标准化<br>
+          <strong>market_position</strong>: <span class="tag tag-amber">△</span> 缺市场份额数据<br>
+          <strong>capital_investment</strong>: <span class="tag tag-red">✗</span> 7/66公司有真实融资额<br>
+          <strong>可信度</strong>: <span class="tag tag-amber">低-中</span> 仅tech_strength有数据支撑
+        </p>
+      </div>
+      <div class="card">
+        <h3>产品成熟度: H100 量产</h3>
+        <p style="font-size:var(--small-size);">
+          <strong>原始数据</strong>: 公开规格页 (intuitionlabs.ai, flopper.io, Wikipedia)<br>
+          <strong>提取</strong>: 手工整理 26款 × 17字段<br>
+          <strong>关联</strong>: tech_node_ids 多对多映射<br>
+          <strong>前端</strong>: 产品页 技术矩阵 + 时序 + 算力对比<br>
+          <strong>可信度</strong>: <span class="tag tag-amber">中</span> 手工整理, 可能有遗漏
+        </p>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num">08 / 10</span>
+</section>
+
+<!-- ====== S9: Progress & Roadmap ====== -->
+<section class="slide" id="s9">
+  <div class="slide-content">
+    <span class="tag tag-blue" style="margin-bottom:0.5rem;">进展与路线</span>
+    <h2>已完成 · 数据缺口 · 下一步</h2>
+    <div class="accent-rule"></div>
+    <div class="grid-2">
+      <div>
+        <h3 style="color:var(--green);">✅ 已完成</h3>
+        <div class="card" style="margin-bottom:0.5rem;">
+          <p style="font-size:var(--small-size);">
+            <strong>专利采集管道</strong> — EPO + HF + LLM, 34,601条, IPC分类<br>
+            <strong>论文采集管道</strong> — OpenAlex, 14,933篇, 按节点搜索<br>
+            <strong>技术分解树</strong> — 7 L1 × 39节点, Bottom-up聚合<br>
+            <strong>产品数据</strong> — 26款AI芯片产品, 参数+分类<br>
+            <strong>前端可视化</strong> — 9 Tab, 30+图表, 节点筛选联动<br>
+            <strong>数据直写DB</strong> — Collector → DB → API, 无需种子数据中转
+          </p>
+        </div>
+      </div>
+      <div>
+        <h3 style="color:var(--accent);">❌ 数据缺口</h3>
+        <div class="card" style="margin-bottom:0.5rem;">
+          <p style="font-size:var(--small-size);">
+            <strong>投融资数据</strong> — Crunchbase/IT桔子 API 付费<br>
+            <strong>供应链数据</strong> — 海关/年报/招投标 未采集<br>
+            <strong>市场份额数据</strong> — IDC/Gartner/Mercury 付费报告<br>
+            <strong>政策数据</strong> — 各国科技战略文件 未采集<br>
+            <strong>标准数据</strong> — ISO/IEEE/3GPP 标准库 未接入<br>
+            <strong>新闻数据</strong> — 仅36氪1源, 西方媒体被墙<br>
+            <strong>企业财务数据</strong> — 营收/市值 仅部分有手工值
+          </p>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:var(--content-gap);">
+      <h3 style="color:var(--blue);">📋 优先级路线图</h3>
+      <div class="metric-row">
+        <div class="metric" style="text-align:left;"><span class="tag tag-red">P0</span> <strong>新闻/事件数据</strong><div style="font-size:var(--small-size);color:var(--muted);">多源RSS + 关键词 → 最新动态Timeline可用</div></div>
+        <div class="metric" style="text-align:left;"><span class="tag tag-amber">P1</span> <strong>投融资数据</strong><div style="font-size:var(--small-size);color:var(--muted);">36氪/IT桔子/公开融资新闻 → 融资趋势图</div></div>
+        <div class="metric" style="text-align:left;"><span class="tag tag-amber">P1</span> <strong>5G/6G + BCI域</strong><div style="font-size:var(--small-size);color:var(--muted);">按AI_chip已跑通的管道复制</div></div>
+        <div class="metric" style="text-align:left;"><span class="tag tag-blue">P2</span> <strong>供应链/政策/标准</strong><div style="font-size:var(--small-size);color:var(--muted);">数据库采购或定向爬取</div></div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num">09 / 10</span>
+</section>
+
+<!-- ====== S10: Summary ====== -->
+<section class="slide" id="s10">
+  <div class="slide-content" style="align-items:flex-start;">
+    <span class="tag tag-red" style="margin-bottom:var(--content-gap);">SUMMARY</span>
+    <h1>谢谢</h1>
+    <div class="accent-rule"></div>
+    <div style="max-width:650px;">
+      <div class="card" style="margin-bottom:1rem;">
+        <h3>系统已具备的核心能力</h3>
+        <p style="font-size:var(--body-size);">
+          1. <strong>专利+论文双引擎</strong> — 自动化采集、分类、聚合，5万条数据入库<br>
+          2. <strong>技术分解树</strong> — 7大L1分支，39节点，bottom-up聚合，父子一致<br>
+          3. <strong>产品技术图谱</strong> — 26款AI芯片，技术参数可对比<br>
+          4. <strong>数据溯源</strong> — 每个数字可追溯到原始数据源和计算过程<br>
+          5. <strong>交互式可视化</strong> — 9个Tab，节点筛选联动，浏览器即可访问
+        </p>
+      </div>
+      <div class="card">
+        <h3>下一步建议</h3>
+        <p style="font-size:var(--body-size);">
+          <strong>短期 (1-2月)</strong>: 补新闻数据让"最新动态"可用<br>
+          <strong>中期 (3-4月)</strong>: 接投融资API，补产业链数据<br>
+          <strong>长期 (6月+)</strong>: 扩展到5G/6G和脑机接口领域
+        </p>
+      </div>
+    </div>
+    <p style="margin-top:var(--content-gap);font-size:var(--small-size);color:var(--muted);">
+      详细文档: <code style="background:var(--tag-bg);padding:2px 6px;">research-output/data-lineage.md</code> ·
+      前端演示: <code style="background:var(--tag-bg);padding:2px 6px;">localhost:3000</code>
+    </p>
+  </div>
+  <span class="slide-num">10 / 10</span>
+</section>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const dotsNav = document.getElementById('navDots');
+  let current = 0;
+
+  // Build nav dots
+  slides.forEach((_, i) => {
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    if (i === 0) dot.classList.add('active');
+    dot.addEventListener('click', () => scrollTo(i));
+    dotsNav.appendChild(dot);
+  });
+
+  function scrollTo(i) {
+    current = Math.max(0, Math.min(i, slides.length - 1));
+    slides[current].scrollIntoView({ behavior: 'smooth' });
+    updateDots();
+  }
+
+  function updateDots() {
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+  }
+
+  // Intersection Observer to track current slide
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting && e.intersectionRatio > 0.5) {
+        current = Array.from(slides).indexOf(e.target);
+        updateDots();
+      }
+    });
+  }, { threshold: 0.5 });
+  slides.forEach(s => observer.observe(s));
+
+  // Keyboard navigation
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+      e.preventDefault();
+      scrollTo(current + 1);
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      scrollTo(current - 1);
+    }
+  });
+
+  // Touch navigation
+  let touchY = 0;
+  document.addEventListener('touchstart', e => { touchY = e.touches[0].clientY; });
+  document.addEventListener('touchend', e => {
+    const diff = touchY - e.changedTouches[0].clientY;
+    if (Math.abs(diff) > 50) scrollTo(current + (diff > 0 ? 1 : -1));
+  });
+})();
+</script>
+</body>
+</html>
