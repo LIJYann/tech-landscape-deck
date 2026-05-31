@@ -148,12 +148,21 @@ p, li { font-size: var(--body-size); line-height: 1.5; color: var(--muted); marg
         <div class="source">Web搜索 + 参数提取</div>
       </div>
       <div class="card" style="text-align:center;">
-        <div class="number">66</div><div class="label">企业</div>
-        <div class="source">专利Assignees推导</div>
+        <div class="number">71</div><div class="label">企业</div>
+        <div class="source">专利 + 公开源 (13家有财务数据)</div>
       </div>
       <div class="card" style="text-align:center;">
         <div class="number">200</div><div class="label">专家</div>
         <div class="source">论文作者提取 (Top200)</div>
+      </div>
+    </div>
+    <div style="margin-top:var(--content-gap);">
+      <h3>财务数据覆盖 (新增)</h3>
+      <div class="metric-row">
+        <div class="metric"><div class="val" style="color:var(--blue);">6</div><div class="lbl">市场份额</div><div style="font-size:var(--small-size);color:var(--muted);">NVIDIA 86%, AMD 7%, Intel 7%...</div></div>
+        <div class="metric"><div class="val" style="color:var(--blue);">7</div><div class="lbl">营收数据</div><div style="font-size:var(--small-size);color:var(--muted);">NVIDIA $130B, AMD $12.6B...</div></div>
+        <div class="metric"><div class="val" style="color:var(--blue);">13</div><div class="lbl">VC融资</div><div style="font-size:var(--small-size);color:var(--muted);">Cerebras $1B, Groq $750M...</div></div>
+        <div class="metric"><div class="val" style="font-size:var(--small-size);color:var(--muted);">来源</div><div class="lbl">Visual Capitalist / Bloomberg / SEC EDGAR / Silicon Analysts / 36氪</div></div>
       </div>
     </div>
     <div style="margin-top:var(--content-gap);">
@@ -407,13 +416,11 @@ p, li { font-size: var(--body-size); line-height: 1.5; color: var(--muted); marg
         <h3 style="color:var(--accent);">❌ 数据缺口</h3>
         <div class="card" style="margin-bottom:0.5rem;">
           <p style="font-size:var(--small-size);">
-            <strong>投融资数据</strong> — Crunchbase/IT桔子 API 付费<br>
             <strong>供应链数据</strong> — 海关/年报/招投标 未采集<br>
-            <strong>市场份额数据</strong> — IDC/Gartner/Mercury 付费报告<br>
             <strong>政策数据</strong> — 各国科技战略文件 未采集<br>
             <strong>标准数据</strong> — ISO/IEEE/3GPP 标准库 未接入<br>
             <strong>新闻数据</strong> — 仅36氪1源, 西方媒体被墙<br>
-            <strong>企业财务数据</strong> — 营收/市值 仅部分有手工值
+            <strong>企业财务数据</strong> — <span style="color:var(--green);">已部分解决</span> 13/71家有真实数据
           </p>
         </div>
       </div>
