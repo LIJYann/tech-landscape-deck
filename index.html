@@ -43,10 +43,9 @@ p,li{font-size:var(--body-size);line-height:1.5;color:#8b949e;margin:0}
 .nav-dots{position:fixed;right:clamp(0.5rem,2vw,1.5rem);top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100}
 .nav-dots .dot{width:8px;height:8px;border-radius:50%;background:#21262d;cursor:pointer;transition:background .2s}
 .nav-dots .dot.active{background:#f0883e}
-/* Background mesh */
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 1200px 800px at 20% 20%,rgba(240,136,62,0.04) 0%,transparent 70%),radial-gradient(ellipse 1000px 700px at 80% 80%,rgba(88,166,255,0.03) 0%,transparent 70%),radial-gradient(ellipse 800px 600px at 50% 50%,rgba(240,136,62,0.02) 0%,transparent 60%)}
+.bg-mesh{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 1200px 800px at 20% 20%,rgba(240,136,62,0.04) 0%,transparent 70%),radial-gradient(ellipse 1000px 700px at 80% 80%,rgba(88,166,255,0.03) 0%,transparent 70%),radial-gradient(ellipse 800px 600px at 50% 50%,rgba(240,136,62,0.02) 0%,transparent 60%)}
 body{background:#0a0e17}
-.slide{position:relative;z-index:1;background:transparent}
+.slide{background:transparent!important}
 .slide::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0}
 .slide-content{position:relative;z-index:2}
 @media(max-height:700px){:root{--slide-padding:clamp(0.75rem,3vw,2rem);--content-gap:clamp(0.4rem,1.5vw,1rem)}.nav-dots,.slide-section-num{display:none}}
@@ -54,6 +53,7 @@ body{background:#0a0e17}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:.2s!important}html{scroll-behavior:auto}}
 </style></head>
 <body>
+<div class="bg-mesh"></div>
 <nav class="nav-dots" id="navDots"></nav>
 
 <!-- S1: Title -->
