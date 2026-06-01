@@ -76,12 +76,12 @@ p,li{font-size:var(--body-size);line-height:1.5;color:#8b949e;margin:0}
 <span class="tag tag-blue" style="margin-bottom:0.5rem">数据获取</span>
 <h2>6类数据源 · 采集方式 · 已入库规模</h2><div class="accent-rule"></div>
 <div class="grid-3" style="font-size:var(--small-size)">
-<div class="card"><h3 style="color:#3fb950">📄 专利 2,618条(已分类) / 34,601条(原始)</h3>
+<div class="card"><h3 style="color:#3fb950">📄 专利 2,618条(已分类)</h3>
 <p style="margin-top:6px"><span class="tag tag-green">🟢 API采集</span> EPO Open API<br>
 <span class="tag tag-amber">🟡 数据集</span> HuggingFace AI专利集<br>
 <span class="tag tag-purple">🔵 LLM分类</span> 540条<br>
-<span style="color:#d29922;font-size:0.72rem">2,618条已匹配到技术树(26.6%)</span></p>
-<p class="source-line">epo_collector.py</p></div>
+<span style="color:#8b949e;font-size:0.72rem">原始采集34,601条（含未分类）, IPC前缀best-match匹配</span></p>
+<p class="source-line">epo_collector.py · write_patent_node_ids.py</p></div>
 <div class="card"><h3 style="color:#3fb950">📝 论文 14,933篇</h3>
 <p style="margin-top:6px"><span class="tag tag-green">🟢 API采集</span> OpenAlex (免费)<br>
 每节点3英文关键词 · relevance排序<br>全字段入库(标题/摘要/作者/引用)</p>
